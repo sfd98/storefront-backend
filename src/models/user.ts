@@ -1,5 +1,8 @@
 // @ts-ignore
-import client from '../database'
+import client from '../database';
+import bcrypt from 'bcrypt'
+import dotenv from 'dotenv'
+import { Client } from 'pg';
 
 export type User = {
     id?: number;
@@ -8,6 +11,9 @@ export type User = {
     password: string;
 }
 
+dotenv.config();
+const pepper = process.env.BCRYPT_PASSWORD;
+const saltRounds = String(process.env.SALT_ROUNDS);
 export class UserStore {
     async index(): Promise<User[]> {
         try{
@@ -39,7 +45,10 @@ export class UserStore {
         try {
             // @ts-ignore
             const conn = await Client.connect();
-            const sql = 'INSERT INTO users (firstName, lastName, password) VALUES ($1, $2, $3) RETURNING *;';
+            const sql = 'INSERT INTO users (firstName, lastName, password_digest) VALUES ($1, $2, $3) RETURNING *;';
+            
+            const hash = bcrypt.hashSync(u.password + pepper, parseInt(saltRounds));
+            
             const result = await conn.query(sql, u.firstName, u.lastName, u.password);
             const user = result.rows[0];
             conn.release();
@@ -47,5 +56,23 @@ export class UserStore {
         } catch (err) {
             throw new Error(`Cannot create user ${u.firstName} ${u.lastName} due to ${err}!`);
         }
+    }
+
+    async authenticate(firstName: string, lastName: string, password: string): Promise<User | null> {
+        //@ts-ignore
+        const conn = await Client.connect()
+        const sql = 'SELECT password_digest FROM users WHERE firstName=($1) AND lastName=($2);'
+
+        const result = await conn.query(sql, [firstName, lastName])
+
+        if(result.rows.length) {
+
+        const user = result.rows[0]
+
+            if (bcrypt.compareSync(password+pepper, user.password_digest)) {
+                return user
+            }
+        }
+        return null;
     }
 }
