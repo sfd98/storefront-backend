@@ -1,4 +1,5 @@
-import Client from '../database'
+// @ts-ignore
+import client from '../database'
 
 export type Product = {
     id: number;
@@ -6,10 +7,11 @@ export type Product = {
     price: number;
 }
 
-export class productStore {
+export class ProductStore {
     async index(): Promise<Product[]> {
         try{
-            const conn = await Client.connect();
+            // @ts-ignore
+            const conn = await client.connect();
             const sql = 'SELECT * FROM products;';
             const result = await conn.query(sql);
             conn.release();

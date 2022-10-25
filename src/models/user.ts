@@ -1,4 +1,5 @@
-import Client from '../database'
+// @ts-ignore
+import client from '../database'
 
 export type User = {
     id: number;
@@ -7,10 +8,11 @@ export type User = {
     password: string;
 }
 
-export class userStore {
+export class UserStore {
     async index(): Promise<User[]> {
         try{
-            const conn = await Client.connect();
+            // @ts-ignore
+            const conn = await client.connect();
             const sql = 'SELECT * FROM users;';
             const result = await conn.query(sql);
             conn.release();

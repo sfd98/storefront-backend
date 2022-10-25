@@ -1,3 +1,4 @@
+// @ts-ignore
 import Client from '../database'
 
 export type Order = {
@@ -6,9 +7,10 @@ export type Order = {
     status: String;
 }
 
-export class orderStore {
+export class OrderStore {
     async index(): Promise<Order[]> {
         try{
+            // @ts-ignore
             const conn = await Client.connect();
             const sql = 'SELECT * FROM orders;';
             const result = await conn.query(sql);
