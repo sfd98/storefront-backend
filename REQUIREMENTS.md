@@ -17,7 +17,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Create N '/users' [POST] [token required]
 
 #### Orders
-- Current Order by user (args: user id) '/orders:user_id' [token required] ???????JOIN TABLE REQUIRED, CHECK LESSON AGAIN
+- Current Order by user (args: user id) '/orders:user_id' [token required] [GET] JOIN TABLE REQUIRED, CHECK LESSON AGAIN
 - [OPTIONAL] Completed Orders by user (args: user id)[token required]
 
 ## Data Shapes
