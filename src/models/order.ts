@@ -71,11 +71,13 @@ export class OrderStore {
     }
   }
 
-  async ordersByUser(user_id: string): Promise<{ userId: number; order_id: string }[]> {
+  async ordersByUser(
+    user_id: string
+  ): Promise<{ userId: number; order_id: string }[]> {
     try {
       //@ts-ignore
       const conn = await client.connect();
-      const sql = "SELECT id FROM oders WHERE user_id = {$1}"
+      const sql = "SELECT id FROM oders WHERE user_id = {$1}";
       const result = await conn.query(sql, [user_id]);
 
       conn.release();

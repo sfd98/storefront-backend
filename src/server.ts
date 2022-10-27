@@ -3,7 +3,6 @@ import bodyParser from 'body-parser';
 import orders_route from './handlers/orders';
 import products_route from './handlers/products';
 import users_route from './handlers/users';
-import dashboard_route from './handlers/dashboards';
 
 const app: express.Application = express();
 const address: string = "0.0.0.0:3000";
@@ -17,7 +16,6 @@ app.get('/', function (req: Request, res: Response) {
 orders_route(app);
 products_route(app);
 users_route(app);
-dashboard_route(app);
 
 app.listen(3000, function () {
     console.log(`starting app on: ${address}`);

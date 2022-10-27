@@ -59,7 +59,7 @@ const addProduct = async (req: Request, res: Response) => {
 };
 
 const ordersbyusers = async (req: Request, res: Response) => {
-  const user_id = req.params.user_id
+  const user_id = req.params.user_id;
   const users = await store.ordersByUser(user_id);
   res.json(users);
 };
@@ -67,7 +67,7 @@ const ordersbyusers = async (req: Request, res: Response) => {
 const orders_route = (app: express.Application) => {
   app.get("/orders", index);
   app.get("/orders/:id", show);
-  app.get("/orders/:user_id", verifyAuthToken, ordersbyusers)
+  app.get("/orders/:user_id", verifyAuthToken, ordersbyusers);
   app.post("/orders", verifyAuthToken, create);
   app.post("/orders/:id/product", verifyAuthToken, addProduct);
 };
