@@ -1,5 +1,5 @@
 // @ts-ignore
-import Client from "../database";
+import client from "../database";
 
 export type Order = {
   id?: number;
@@ -11,7 +11,7 @@ export class OrderStore {
   async index(): Promise<Order[]> {
     try {
       // @ts-ignore
-      const conn = await Client.connect();
+      const conn = await client.connect();
       const sql = "SELECT * FROM orders;";
       const result = await conn.query(sql);
       conn.release();
@@ -23,7 +23,7 @@ export class OrderStore {
   async show(id: string): Promise<Order> {
     try {
       // @ts-ignore
-      const conn = await Client.connect();
+      const conn = await client.connect();
       const sql = "SELECT * FROM orders WHERE id = ($1);";
       const result = await conn.query(sql, [id]);
       conn.release();
@@ -36,13 +36,13 @@ export class OrderStore {
   async create(o: Order): Promise<Order> {
     try {
       // @ts-ignore
-      const conn = await Client.connect();
+      const conn = await client.connect();
       const sql =
         "INSERT INTO orders (user_id, status) VALUES ($1, $2) RETURNING *;";
       const result = await conn.query(sql, [o.user_id, o.status]);
-      const product = result.rows[0];
+      const order = result.rows[0];
       conn.release();
-      return product;
+      return order;
     } catch (err) {
       throw new Error(
         `Cannot create order for user ${o.user_id} due to ${err}!`
@@ -52,14 +52,14 @@ export class OrderStore {
 
   async addProduct(
     quantity: number,
-    orderId: number,
-    productId: number
+    orderId: string,
+    productId: string
   ): Promise<Order> {
     try {
       //@ts-ignore
-      const conn = await Client.connect();
+      const conn = await client.connect();
       const sql =
-        "INSERT INTO order-products (quantity, orderId, productId) VALUES ($1, $2, $3) RETURNING *;";
+        "INSERT INTO order_products (quantity, order_id, product_id) VALUES ($1, $2, $3) RETURNING *;";
       const result = await conn.query(sql, [quantity, orderId, productId]);
       const order = result.rows[0];
       conn.release();
@@ -68,6 +68,21 @@ export class OrderStore {
       throw new Error(
         `Could not add product ${productId} to order ${orderId}!`
       );
+    }
+  }
+
+  async ordersByUser(user_id: string): Promise<{ userId: number; order_id: string }[]> {
+    try {
+      //@ts-ignore
+      const conn = await client.connect();
+      const sql = "SELECT id FROM oders WHERE user_id = {$1}"
+      const result = await conn.query(sql, [user_id]);
+
+      conn.release();
+
+      return result.rows;
+    } catch (err) {
+      throw new Error(`unable get products and orders: ${err}`);
     }
   }
 }

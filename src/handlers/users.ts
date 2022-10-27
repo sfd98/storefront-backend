@@ -1,45 +1,47 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { User, UserStore } from "../models/user";
 import jwt from "jsonwebtoken";
 
 const store = new UserStore();
 
-const index = async (req: Request, res: Response) => {
+//Verify Function
+const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authorizationHeader = req.headers.authorization;
-    const token = (authorizationHeader as string).split("")[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string);
+    const token = req.headers.authorization;
+    if (token === "" || token === undefined) {
+      throw "No or wrong token";
+    }
+    const decoded = jwt.verify(
+      token as string,
+      process.env.TOKEN_SECRET as string
+    );
+    next();
   } catch (err) {
-    res.status(401).json("Access denied invalid token!");
-    return;
+    res.status(401);
+    res.json(err);
   }
+};
 
+//Index Route
+const index = async (req: Request, res: Response) => {
   const users = await store.index();
   res.json(users);
 };
 
+//Show Route
 const show = async (req: Request, res: Response) => {
-  try {
-    const authorizationHeader = req.headers.authorization;
-    const token = (authorizationHeader as string).split("")[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string);
-  } catch (err) {
-    res.status(401).json("Access denied invalid token!");
-    return;
-  }
-
   const user = await store.show(req.params.id);
   res.json(user);
 };
 
+//Create Route
 const create = async (req: Request, res: Response) => {
+  const user: User = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    password: req.body.password,
+  };
   try {
-    
-    const user: User = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      password: req.body.password,
-    };
     const newUser = await store.create(user);
     var token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET as string);
     res.json(token);
@@ -49,6 +51,7 @@ const create = async (req: Request, res: Response) => {
   }
 };
 
+//Authenticate Route
 const authenticate = async (req: Request, res: Response) => {
   const user: User = {
     firstName: req.body.firstName,
@@ -70,8 +73,8 @@ const authenticate = async (req: Request, res: Response) => {
 };
 
 const users_route = (app: express.Application) => {
-  app.get("/users", index);
-  app.get("/users/:id", show);
+  app.get("/users", verifyAuthToken, index);
+  app.get("/users/:id", verifyAuthToken, show);
   app.post("/users", create);
 };
 

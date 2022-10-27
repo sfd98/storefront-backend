@@ -5,19 +5,19 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## API Endpoints
 #### Products
-- Index '/products' [GET]
-- Show '/products:id' [id]
-- Create '/products' [POST][token required]
+- Index '/products' [GET]   OK!
+- Show '/products:id' [id]  OK!
+- Create '/products' [POST][token required] OK!
 - [OPTIONAL] Top 5 most popular products 
 - [OPTIONAL] Products by category (args: product category)
 
 #### Users
-- Index '/users' [GET] [token required]
-- Show '/users:id' [GET] [token required]
-- Create N '/users' [POST] [token required]
+- Index '/users' [GET] [token required]         OK!
+- Show '/users:id' [GET] [token required]       OK!
+- Create N '/users' [POST] [token required]     OK!
 
 #### Orders
-- Current Order by user (args: user id) '/orders:user_id' [token required] [GET] JOIN TABLE REQUIRED, CHECK LESSON AGAIN
+- Current Order by user (args: user id) '/orders:user_id' [token required] [GET] OK!
 - [OPTIONAL] Completed Orders by user (args: user id)[token required]
 
 ## Data Shapes

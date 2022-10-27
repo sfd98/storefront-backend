@@ -58,3 +58,5 @@ Before submitting your project, spin it up and test each endpoint. If each one r
 psql -d storefront_backend -U full_stack_user
 
 start with "db-migrate up"
+
+authorization token always in the header

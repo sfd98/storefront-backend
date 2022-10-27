@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { Product, ProductStore } from "../models/product";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -6,27 +6,37 @@ import dotenv from "dotenv";
 dotenv.config();
 const store = new ProductStore();
 
+//Verify Function
+const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.headers.authorization;
+    if (token === "" || token === undefined) {
+      throw "No or wrong token";
+    }
+    const decoded = jwt.verify(
+      token as string,
+      process.env.TOKEN_SECRET as string
+    );
+    next();
+  } catch (err) {
+    res.status(401);
+    res.json(err);
+  }
+};
+//Index Route
 const index = async (_req: Request, res: Response) => {
   const products = await store.index();
   res.json(products);
 };
 
+//Show Route
 const show = async (req: Request, res: Response) => {
   const product = await store.show(req.params.id);
   res.json(product);
 };
 
+//Create Route
 const create = async (req: Request, res: Response) => {
-  /*try {
-    const authorizationHeader = req.headers.authorization;
-    const token = (authorizationHeader as string).split("")[1];
-    jwt.verify(token, process.env.TOKEN_SECRET as string);
-  } catch (err) {
-    res.status(401).json("Access denied invalid token!");
-    return;
-  }
-  */
-
   try {
     const product: Product = {
       name: req.body.name,
@@ -43,7 +53,7 @@ const create = async (req: Request, res: Response) => {
 const products_route = (app: express.Application) => {
   app.get("/products", index);
   app.get("/products/:id", show);
-  app.post("/products", create);
+  app.post("/products", verifyAuthToken, create);
 };
 
 export default products_route;
