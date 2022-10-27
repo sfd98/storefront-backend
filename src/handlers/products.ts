@@ -17,7 +17,7 @@ const show = async (req: Request, res: Response) => {
 };
 
 const create = async (req: Request, res: Response) => {
-  try {
+  /*try {
     const authorizationHeader = req.headers.authorization;
     const token = (authorizationHeader as string).split("")[1];
     jwt.verify(token, process.env.TOKEN_SECRET as string);
@@ -25,6 +25,7 @@ const create = async (req: Request, res: Response) => {
     res.status(401).json("Access denied invalid token!");
     return;
   }
+  */
 
   try {
     const product: Product = {
