@@ -4,7 +4,7 @@
 ## Database setup
 
 Perform these statements:
-
+```SQL
 psql -d storefront_backend -U postgres;
 GRANT ALL ON schema public TO full_stack_user;
 exit
@@ -12,13 +12,13 @@ psql -d storefront_backend_test -U postgres;
 GRANT ALL ON schema public TO full_stack_user;
 exit
 psql -d storefront_backend -U full_stack_user;
-
+```
 ## Environment setup
 
 Start with "yarn migrate" to create the tables for dev and test environment.
 
 ENV file should look like this:
-
+```
 POSTGRES_HOST=127.0.0.1
 POSTGRES_DB=storefront_backend
 POSTGRES_TEST_DB=storefront_backend_test
@@ -28,7 +28,7 @@ BCRYPT_PASSWORD=password123
 SALT_ROUNDS=10
 ENV=dev
 TOKEN_SECRET=tokensecret123!
-
+```
 Toggle the test and dev mode by changing the variable in the .env file.
 
 ## Running
