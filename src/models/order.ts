@@ -3,8 +3,15 @@ import client from "../database";
 
 export type Order = {
   id?: number;
-  user_id: number;
-  status: String;
+  user_id: string;
+  status: string;
+};
+
+export type ProductInOrder = {
+  id?: number;
+  quantity: number;
+  order_id: string;
+  product_id: string;
 };
 
 export class OrderStore {
@@ -41,6 +48,7 @@ export class OrderStore {
         "INSERT INTO orders (user_id, status) VALUES ($1, $2) RETURNING *;";
       const result = await conn.query(sql, [o.user_id, o.status]);
       const order = result.rows[0];
+      console.log(order);
       conn.release();
       return order;
     } catch (err) {
@@ -50,36 +58,34 @@ export class OrderStore {
     }
   }
 
-  async addProduct(
-    quantity: number,
-    orderId: string,
-    productId: string
-  ): Promise<Order> {
+  async addProduct(po: ProductInOrder): Promise<ProductInOrder> {
     try {
       //@ts-ignore
       const conn = await client.connect();
       const sql =
         "INSERT INTO order_products (quantity, order_id, product_id) VALUES ($1, $2, $3) RETURNING *;";
-      const result = await conn.query(sql, [quantity, orderId, productId]);
+      const result = await conn.query(sql, [
+        po.quantity,
+        po.order_id,
+        po.product_id,
+      ]);
       const order = result.rows[0];
+      console.log(order);
       conn.release();
       return order;
     } catch {
       throw new Error(
-        `Could not add product ${productId} to order ${orderId}!`
+        `Could not add product ${po.product_id} to order ${po.order_id}!`
       );
     }
   }
 
-  async ordersByUser(
-    user_id: string
-  ): Promise<{ userId: number; order_id: string }[]> {
+  async ordersByUser(user_id: string): Promise<Order | Order[]> {
     try {
       //@ts-ignore
       const conn = await client.connect();
-      const sql = "SELECT id FROM oders WHERE user_id = {$1}";
+      const sql = "SELECT * FROM orders WHERE user_id = ($1);";
       const result = await conn.query(sql, [user_id]);
-
       conn.release();
 
       return result.rows;

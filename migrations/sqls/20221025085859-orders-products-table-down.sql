@@ -1,1 +1,1 @@
-DROP TABLE orders-products cascade;
+DROP TABLE IF EXISTS order_products CASCADE;

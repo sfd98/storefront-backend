@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import { Order, OrderStore } from "../models/order";
+import { Order, OrderStore, ProductInOrder } from "../models/order";
 import jwt from "jsonwebtoken";
 
 const store = new OrderStore();
@@ -47,18 +47,20 @@ const create = async (req: Request, res: Response) => {
 };
 
 const addProduct = async (req: Request, res: Response) => {
-  const quantity: number = req.body.quantity;
-  const orderId: string = req.params.id;
-  const productId: string = req.body.productId;
   try {
-    const addedProduct = await store.addProduct(quantity, orderId, productId);
-    res.json(addedProduct);
+    const productInOrder: ProductInOrder = {
+      quantity: req.body.quantity,
+      order_id: req.params.id,
+      product_id: req.body.productId,
+    };
+    const orderAddedProduct = await store.addProduct(productInOrder);
+    res.json(orderAddedProduct);
   } catch (err) {
     res.status(400).json(err);
   }
 };
 
-const ordersbyusers = async (req: Request, res: Response) => {
+const ordersbyuser = async (req: Request, res: Response) => {
   const user_id = req.params.user_id;
   const users = await store.ordersByUser(user_id);
   res.json(users);
@@ -67,7 +69,7 @@ const ordersbyusers = async (req: Request, res: Response) => {
 const orders_route = (app: express.Application) => {
   app.get("/orders", index);
   app.get("/orders/:id", show);
-  app.get("/orders/:user_id", verifyAuthToken, ordersbyusers);
+  app.get("/ordersbyuser/:user_id", verifyAuthToken, ordersbyuser);
   app.post("/orders", verifyAuthToken, create);
   app.post("/orders/:id/product", verifyAuthToken, addProduct);
 };

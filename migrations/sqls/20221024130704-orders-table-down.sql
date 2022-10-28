@@ -1,1 +1,1 @@
-DROP TABLE orders cascade;
+DROP TABLE IF EXISTS orders CASCADE;

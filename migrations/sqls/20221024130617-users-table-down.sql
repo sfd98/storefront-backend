@@ -1,1 +1,1 @@
-DROP TABLE users cascade;
+DROP TABLE IF EXISTS users CASCADE;

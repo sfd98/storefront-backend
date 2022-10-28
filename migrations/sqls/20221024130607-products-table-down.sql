@@ -1,1 +1,1 @@
-DROP TABLE products cascade;
+DROP TABLE IF EXISTS products CASCADE;

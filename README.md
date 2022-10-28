@@ -55,8 +55,38 @@ Before submitting your project, spin it up and test each endpoint. If each one r
 
 # Instructions to run
 
-psql -d storefront_backend -U full_stack_user
+Database setup:
 
-start with "db-migrate up"
+Perform these statements:
 
-authorization token always in the header
+psql -d storefront_backend -U postgres;
+GRANT ALL ON schema public TO full_stack_user;
+exit
+psql -d storefront_backend_test -U postgres;
+GRANT ALL ON schema public TO full_stack_user;
+exit
+psql -d storefront_backend -U full_stack_user;
+
+start with "yarn migrate" to create the tables for dev and test environment.
+
+ENV file should look like this:
+
+POSTGRES_HOST=127.0.0.1
+POSTGRES_DB=storefront_backend
+POSTGRES_TEST_DB=storefront_backend_test
+POSTGRES_USER=full_stack_user
+POSTGRES_PASSWORD=password123
+BCRYPT_PASSWORD=password123
+SALT_ROUNDS=10
+ENV=dev
+TOKEN_SECRET=tokensecret123!
+
+Toggle the test and dev mode by changing the variable in the .env file.
+
+I have provided the endpoints as postman collection in the folder "storefront_backend.postman_collection.json"
+To use the API in postman use "yarn watch"
+
+Start by creating a user and saving the authorization token to use the other API calls.
+Insert the authorization token as a header value with the key "authorization"
+It should now be possible to make all the API calls.
+
