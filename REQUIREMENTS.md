@@ -53,24 +53,3 @@ quantity        integer
 order_id        bigint FOREIGN KEY REFERENCES orders.id
 product_id      bigint FOREIGN KEY REFERENCES products.id         
 ```
-
-## Data Shapes
-#### Product
--  id
-- name
-- price
-- [OPTIONAL] category
-
-#### User
-- id
-- firstName
-- lastName
-- password
-
-#### Orders
-- id
-- id of each product in the order
-- quantity of each product in the order
-- user_id
-- status of order (active or complete)
-
