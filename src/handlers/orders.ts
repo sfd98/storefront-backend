@@ -23,13 +23,20 @@ const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const index = async (_req: Request, res: Response) => {
-  const orders = await store.index();
-  res.json(orders);
+  try {
+    const orders = await store.index();
+    res.json(orders);
+  } catch (err) {}
 };
 
 const show = async (req: Request, res: Response) => {
-  const order = await store.show(req.params.id);
-  res.json(order);
+  try {
+    const order = await store.show(req.params.id);
+    res.json(order);
+  } catch (err) {
+    res.status(400);
+    res.json(err);
+  }
 };
 
 const create = async (req: Request, res: Response) => {
@@ -61,9 +68,13 @@ const addProduct = async (req: Request, res: Response) => {
 };
 
 const ordersbyuser = async (req: Request, res: Response) => {
-  const user_id = req.params.user_id;
-  const users = await store.ordersByUser(user_id);
-  res.json(users);
+  try {
+    const user_id = req.params.user_id;
+    const users = await store.ordersByUser(user_id);
+    res.json(users);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 };
 
 const orders_route = (app: express.Application) => {

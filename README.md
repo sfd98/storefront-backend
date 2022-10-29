@@ -4,7 +4,22 @@
 ## Database setup
 
 Perform these statements:
+
+**Create user**
+
 ```SQL
+CREATE USER full_stack_user WITH PASSWORD 'password123';
+```
+
+**Create Databases**
+```SQL
+CREATE DATABASE storefront_backend;
+CREATE DATABASE storefront_backend_test;
+```
+
+**Grant privileges to user in both databases**
+
+```sh
 psql -d storefront_backend -U postgres;
 GRANT ALL ON schema public TO full_stack_user;
 exit
@@ -14,6 +29,14 @@ exit
 psql -d storefront_backend -U full_stack_user;
 ```
 ## Environment setup
+
+**Ports and host**
+
+The used port is :3000
+The host can be changed in the .env file with the variable POSTGRES_HOST
+Standard is localhost
+
+**Environment**
 
 Start with "yarn migrate" to create the tables for dev and test environment.
 

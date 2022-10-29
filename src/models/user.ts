@@ -63,20 +63,26 @@ export class UserStore {
     lastName: string,
     password: string
   ): Promise<User | null> {
-    //@ts-ignore
-    const conn = await client.connect();
-    const sql =
-      "SELECT password_digest FROM users WHERE firstName=($1) AND lastName=($2);";
+    try {
+      //@ts-ignore
+      const conn = await client.connect();
+      const sql =
+        "SELECT password_digest FROM users WHERE firstName=($1) AND lastName=($2);";
 
-    const result = await conn.query(sql, [firstName, lastName]);
+      const result = await conn.query(sql, [firstName, lastName]);
 
-    if (result.rows.length) {
-      const user = result.rows[0];
+      if (result.rows.length) {
+        const user = result.rows[0];
 
-      if (bcrypt.compareSync(password + pepper, user.password_digest)) {
-        return user;
+        if (bcrypt.compareSync(password + pepper, user.password_digest)) {
+          return user;
+        }
       }
+      return null;
+    } catch (err) {
+      throw new Error(
+        `Cannot authenticate user ${firstName} ${lastName} due to ${err}!`
+      );
     }
-    return null;
   }
 }
